@@ -8,6 +8,7 @@ public class BouncePlayerController : MonoBehaviour {
 
     Rigidbody playerRigidBody;
     Vector3 playerMovement;
+    bool bIsOnGround;
 
 
 	// Use this for initialization
@@ -25,6 +26,11 @@ public class BouncePlayerController : MonoBehaviour {
         float h = Input.GetAxisRaw("Horizontal");
         Move(h);
 
+        if (Input.GetAxisRaw("Jump") > 0 && bIsOnGround == true) 
+        {
+            Jump();
+        }
+
     }
 
     void Move(float h)
@@ -36,6 +42,27 @@ public class BouncePlayerController : MonoBehaviour {
             float move_h = h * moveSpeed * Time.deltaTime;
             playerMovement.x = move_h;
             playerRigidBody.MovePosition(transform.position + playerMovement);
+        }
+    }
+
+    void Jump()
+    {
+        playerRigidBody.AddForce(Vector3.up * 200f);
+    }
+
+    void OnCollisionEnter(Collision hit)
+    {
+        if(hit.gameObject.tag == "Floor")
+        {
+            bIsOnGround = true;
+        }
+    }
+
+    void OnCollisionExit(Collision hit)
+    {
+        if (hit.gameObject.tag == "Floor")
+        {
+            bIsOnGround = false;
         }
     }
 }
